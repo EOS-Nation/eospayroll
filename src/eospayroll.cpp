@@ -69,17 +69,17 @@ void eospayroll::payout( name _self,
 		/*Basic currency switch, needs improvement. There is code to have price, (USD
 		at least), grabbed through Oraclize (WIP).*/
 
-		switch (currency_name) {
+		switch (currency_name.value) {
 
-		case "can"_n:
+		case "can"_n.value:
 			currency_value = can_to_eos;
 			break;
 
-		case "usd"_n:
+		case "usd"_n.value:
 			currency_value = usd_to_eos;
 			break;
 
-		case "krn"_n:
+		case "krn"_n.value:
 			currency_value = krn_to_eos;
 			break;
 
