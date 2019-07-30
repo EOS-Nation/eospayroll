@@ -3,31 +3,62 @@
 #include <eosio/print.hpp>
 #include <eosio/system.hpp>
 
-//#include <eos-api.hpp> Oraclize (WIP)
-
 using namespace eosio;
 using namespace std;
 
-CONTRACT eospayroll : public contract{
-  public:
-	using contract::contract;
-	eospayroll(name receiver, name code, datastream<const char*> ds) :contract(receiver, code, ds), _payees(receiver, receiver.value), eos_symbol("EOS", 4) {}
+class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
+	public:
+		using contract::contract;
 
-	ACTION addmodpayee(name payee_name, uint64_t  pay_rate,
-	uint8_t pay_interval, uint32_t last_pay, name currency_name, 
-	uint64_t  payee_id, string memo);
+		/**
+         * Construct a new contract given the contract name
+         *
+         * @param {name} receiver - The name of this contract
+         * @param {name} code - The code name of the action this contract is processing.
+         * @param {datastream} ds - The datastream used
+         */
+        eospayroll( name receiver, name code, eosio::datastream<const char*> ds )
+            : contract( receiver, code, ds ),
+                _payees( receiver, receiver.value ),
+                eos_symbol("EOS", 4)
+        {}
 
-	ACTION removepayee(name payee_name);
+		/**
+		 * ACTION addmodpayee
+		 */
+        [[eosio::action]]
+		void addmodpayee( name payee_name,
+						  uint64_t pay_rate,
+						  uint8_t pay_interval,
+						  uint32_t last_pay,
+						  name currency_name,
+						  uint64_t payee_id,
+						  string memo );
 
-	ACTION payout(name _self, name payee_name, uint64_t pay_rate,
-	uint8_t pay_interval, uint32_t last_pay, name currency_name, 
-	uint64_t payee_id, string memo);
+		/**
+		 * ACTION removepayee
+		 */
+		[[eosio::action]]
+		void removepayee( name payee_name );
 
-  private:
+		/**
+		 * ACTION payout
+		 */
+		[[eosio::action]]
+		void payout( name _self,
+					 name payee_name,
+					 uint64_t pay_rate,
+					 uint8_t pay_interval,
+					 uint32_t last_pay,
+					 name currency_name,
+					 uint64_t payee_id,
+					 string memo );
 
-	  //Table containing all info related to the payees
+	private:
 
-		  TABLE payee_info {
+		//Table containing all info related to the payees
+
+	    struct [[eosio::table("payees")]] payee_info {
 			name     payee_name;
 			uint64_t pay_rate;
 			uint8_t  pay_interval; //Can be set to 1-4 (weeks), needs improvment (WIP)
@@ -38,36 +69,28 @@ CONTRACT eospayroll : public contract{
 			uint8_t  payee_id;
 			auto primary_key() const { return payee_name.value; }
 			auto secondary_key() const { return payee_id; }
-		  };
-		  
-		  using payee_table = multi_index <"payees"_n, payee_info>;
+		};
 
-		  payee_table _payees;
+		using payee_table = multi_index <"payees"_n, payee_info>;
 
-		  const symbol eos_symbol;
+		payee_table _payees;
 
-		 //Static values for testing
-		 //Oraclize can be used to grab EOS price (WIP)
+		const symbol eos_symbol;
 
-			uint64_t currency_value;
+		// Static values for testing
+		// Oraclize can be used to grab EOS price (WIP)
 
+		uint64_t currency_value;
 
-			double can_to_eos = 5.41;
+		double can_to_eos = 5.41;
 
-			double usd_to_eos = 4.29;
+		double usd_to_eos = 4.29;
 
-			double krn_to_eos = 38.85;
+		double krn_to_eos = 38.85;
 
-		 //Time values for pay delays, in seconds.
+		// Time values for pay delays, in seconds.
 
-			uint32_t now() { return current_time_point().sec_since_epoch(); }
+		uint32_t now() { return current_time_point().sec_since_epoch(); }
 
-			uint32_t pay_delay = 0;
-
-};
-
-
-
-
-
-EOSIO_DISPATCH(eospayroll, (addmodpayee)(removepayee)(payout))
+		uint32_t pay_delay = 0;
+	};
