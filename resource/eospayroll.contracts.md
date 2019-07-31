@@ -1,11 +1,11 @@
-<h1 class="contract">addmodpayee</h1>
+<h1 class="contract">setpayee</h1>
 
 ## Description
 
-Add/modify payee
+Set payee
 
 
-<h1 class="contract">removepayee</h1>
+<h1 class="contract">rmvpayee</h1>
 
 ## Description
 
@@ -16,3 +16,15 @@ Remove payee
 ## Description
 
 Payout
+
+<h1 class="contract">setcurrency</h1>
+
+## Description
+
+Set currency
+
+<h1 class="contract">rmvcurrency</h1>
+
+## Description
+
+Remove currency
