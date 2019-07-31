@@ -13,13 +13,16 @@
  */
 void eospayroll::setpayee( name name, symbol_code currency )
 {
-	require_auth( get_self() );
+	check( has_auth( name ) || has_auth( get_self() ), "missing required authority");
     check( currency.is_valid(), "currency symbol_code is not valid");
 	check( is_account( name ), "account does not exist");
     check_currency_exists( currency );
 
-    if (payee_exists( name )) modify_payee( name, currency );
-    else emplace_payee( name, currency );
+    if (payee_exists( name )) {
+        modify_payee( name, currency );
+    } else {
+        emplace_payee( name, currency );
+    }
 }
 
 /**
@@ -46,18 +49,15 @@ void eospayroll::erase_payee( name name ) {
 
 void eospayroll::emplace_payee( name name, symbol_code currency ) {
     _payee.emplace( get_self(), [&](auto& row) {
-        row.name            = name;
-        row.currency        = currency;
-        row.total_payout    = zero_currency( currency );
-        row.last_payout     = time_point_sec(0);
+        row.name        = name;
+        row.currency    = currency;
     });
 }
 
 void eospayroll::modify_payee( name name, symbol_code currency ) {
     auto payee_itr = _payee.find( name.value );
     _payee.modify( payee_itr, get_self(), [&](auto& row) {
-        row.currency        = currency;
-        row.total_payout    = zero_currency( currency );
+        row.currency    = currency;
     });
 }
 
@@ -67,5 +67,5 @@ bool eospayroll::payee_exists( name name ) {
 }
 
 void eospayroll::check_payee_exists( name name ) {
-    check( payee_exists( name ), "[name] no matching results" );
+    check( payee_exists( name ), "[payee.name] no matching results" );
 }

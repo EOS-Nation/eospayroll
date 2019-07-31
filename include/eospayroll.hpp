@@ -21,7 +21,8 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
         eospayroll( name receiver, name code, eosio::datastream<const char*> ds )
             : contract( receiver, code, ds ),
                 _payee( receiver, receiver.value ),
-				_currency( receiver, receiver.value )
+				_currency( receiver, receiver.value ),
+				_payroll( receiver, receiver.value )
         {}
 
 		/**
@@ -48,6 +49,22 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
         [[eosio::action]]
 		void rmvcurrency( symbol_code currency );
 
+		/**
+		 * ACTION addpayroll
+		 */
+        [[eosio::action]]
+		void addpayroll( name from,
+						 name to,
+					     asset quantity,
+						 string memo,
+						 uint64_t interval );
+
+		/**
+		 * ACTION rmvpayroll
+		 */
+        [[eosio::action]]
+		void rmvpayroll( uint64_t id );
+
 		// /**
 		//  * ACTION payout
 		//  */
@@ -69,22 +86,16 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 *
 		 * @param {name} EOSIO name of payee
 		 * @param {symbol_code} preferred currency for payout
-		 * @param {asset} total amount paid from payouts
-		 * @param {timestamp} last time paid
 		 *
 		 * @example
 		 * {
 		 *   "name": "myaccount",
-		 *   "currency": "CAD",
-		 *   "total_payout": "100.00 CAD",
-		 *   "last_payout": "2019-07-30T22:21:51"
+		 *   "currency": "CAD"
 		 * }
 		 */
 	    struct [[eosio::table("payee")]] payee_row {
 			name     		name;
 			symbol_code 	currency;
-        	asset 			total_payout;
-        	time_point_sec 	last_payout;
 
 			auto primary_key() const { return name.value; }
 		};
@@ -96,29 +107,67 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 *
 		 * @param {symbol_code} currency - currency code (ex: "CAD")
 		 * @param {asset} rate - rate of currency valued in EOS (ex: "4.56 CAD")
-		 * @param {timestamp} last_time - last rate was updated
+		 * @param {time_point_sec} timestamp - last time currency rate was updated
 		 *
 		 * @example
 		 * {
 		 *   "currency": "CAD",
 		 *   "rate": "4.56 CAD",
-		 *   "last_rate": "2019-07-30T22:21:51"
+		 *   "timestamp": "2019-07-30T22:21:51"
 		 * }
 		 */
 	    struct [[eosio::table("currency")]] currency_row {
 			symbol_code    	currency;
 			asset     		rate;
-			time_point_sec 	last_rate;
+			time_point_sec 	timestamp;
 
 			auto primary_key() const { return currency.raw(); }
 		};
 
+		/**
+		 * TABLE payroll
+		 *
+		 * Table containing all info related to the payroll
+		 *
+		 * @param {uint64_t} id - unique identifier of payroll
+		 * @param {name} from - name of payor
+		 * @param {name} to - name of payee
+		 * @param {asset} quantity - quantity amount to be paid per payout period  (ex: "100.00 CAD")
+		 * @param {uint64_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+		 * @param {string} memo - memo used when sending transfer
+		 * @param {time_point_sec} timestamp - last time payroll was paid
+		 *
+		 * @example
+		 * {
+		 *   "id": 0,
+		 *   "from": "fromaccount",
+		 *   "to": "toaccount",
+		 *   "quantity": "100.00 CAD",
+		 *   "interval": 604800,
+		 *   "memo": "weekly salary",
+		 *   "timestamp": "2019-07-30T22:21:51"
+		 * }
+		 */
+	    struct [[eosio::table("payroll")]] payroll_row {
+			uint64_t        id;
+			name			from;
+			name			to;
+			asset			quantity;
+			string			memo;
+			uint64_t		interval;
+			time_point_sec	timestamp;
+
+			auto primary_key() const { return id; }
+		};
+
 		// Multi-indexes
 		using payee_table = multi_index <"payee"_n, payee_row>;
-		using currency_table = multi_index <"rate"_n, currency_row>;
+		using currency_table = multi_index <"currency"_n, currency_row>;
+		using payroll_table = multi_index <"payroll"_n, payroll_row>;
 
 		payee_table _payee;
 		currency_table _currency;
+		payroll_table _payroll;
 
 		// Static values for testing
 		// Oraclize can be used to grab EOS price (WIP)
@@ -138,16 +187,26 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		uint32_t pay_delay = 0;
 
 		// private methods
+
+		// payee
 		bool payee_exists( name name );
 		void check_payee_exists( name name );
 		void emplace_payee( name name, symbol_code currency );
 		void modify_payee( name name, symbol_code currency );
 		void erase_payee( name name );
 
+		// currency
 		bool currency_exists( symbol_code currency );
 		void check_currency_exists( symbol_code currency );
 		void emplace_currency( asset rate );
 		void modify_currency( asset rate );
 		void erase_currency( symbol_code currency );
 		asset zero_currency( symbol_code currency );
+
+		// payroll
+		uint64_t emplace_payroll( name from, name to, asset quantity, string memo, uint64_t interval );
+		void erase_payroll( uint64_t id );
+		bool payroll_exists( uint64_t id );
+		void check_payroll_exists( uint64_t id );
+		void update_payroll_timestamp( uint64_t id );
 	};

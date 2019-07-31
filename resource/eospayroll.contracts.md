@@ -28,3 +28,15 @@ Set currency
 ## Description
 
 Remove currency
+
+<h1 class="contract">addpayroll</h1>
+
+## Description
+
+Add payroll
+
+<h1 class="contract">rmvpayroll</h1>
+
+## Description
+
+Remove payroll
