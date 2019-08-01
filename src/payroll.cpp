@@ -1,7 +1,7 @@
 /**
  * ACTION addpayroll
  */
-void eosnpayroll::addpayroll( name sender, name payee, asset quantity, string memo, uint64_t interval )
+void eospayroll::addpayroll( name sender, name payee, asset quantity, string memo, uint64_t interval )
 {
 	require_auth( sender );
     check( quantity.is_valid(), "[quantity] is not valid");
@@ -14,20 +14,21 @@ void eosnpayroll::addpayroll( name sender, name payee, asset quantity, string me
 /**
  * ACTION rmvpayroll
  */
-void eosnpayroll::rmvpayroll( uint64_t id )
+void eospayroll::rmvpayroll( uint64_t id )
 {
-	require_auth( get_self() );
     check_payroll_exists( id );
+    auto payroll_itr = _payroll.find( id );
+	require_auth( payroll_itr->sender );
     erase_payroll( id );
 }
 
-void eosnpayroll::erase_payroll( uint64_t id )
+void eospayroll::erase_payroll( uint64_t id )
 {
     auto payroll_itr = _payroll.find( id );
 	_payroll.erase( payroll_itr );
 }
 
-uint64_t eosnpayroll::emplace_payroll( name sender, name payee, asset quantity, string memo, uint64_t interval )
+uint64_t eospayroll::emplace_payroll( name sender, name payee, asset quantity, string memo, uint64_t interval )
 {
     const uint64_t id = _payroll.available_primary_key();
 
@@ -43,7 +44,7 @@ uint64_t eosnpayroll::emplace_payroll( name sender, name payee, asset quantity, 
     return id;
 }
 
-void eosnpayroll::update_payroll_timestamp( uint64_t id )
+void eospayroll::update_payroll_timestamp( uint64_t id )
 {
     auto payroll_itr = _payroll.find( id );
 
@@ -52,13 +53,13 @@ void eosnpayroll::update_payroll_timestamp( uint64_t id )
     });
 }
 
-bool eosnpayroll::payroll_exists( uint64_t id )
+bool eospayroll::payroll_exists( uint64_t id )
 {
     auto payroll_itr = _payroll.find( id );
     return payroll_itr != _payroll.end();
 }
 
-void eosnpayroll::check_payroll_exists( uint64_t id )
+void eospayroll::check_payroll_exists( uint64_t id )
 {
     check( payroll_exists( id ), "[id] no matching payroll results" );
 }

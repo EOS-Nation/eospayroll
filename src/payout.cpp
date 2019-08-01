@@ -1,17 +1,17 @@
 /**
  * ACTION payout
  */
-void eosnpayroll::payout( name sender )
+void eospayroll::payout( name sender )
 {
 	require_auth( sender );
 
-    auto by_sender = _payroll.get_index<"bysender"_n>();
-    auto payroll_itr = by_sender.find( sender.value );
-	check( payroll_itr == by_sender.end(), "no payroll entries found");
+	print("foo");
+	print("foo","bar");
 
-    while (payroll_itr != by_sender.end()){
-		print("sender:", payroll_itr->sender);
-		print("payee:", payroll_itr->payee);
+    auto by_sender = _payroll.get_index<"bysender"_n>();
+    for (auto payroll_itr = by_sender.lower_bound(sender.value), end_itr = by_sender.upper_bound(sender.value); payroll_itr != end_itr; ++payroll_itr) {
+		print("sender:", payroll_itr->sender, "\n");
+		print("payee:", payroll_itr->payee, "\n");
 		print("quantity:", payroll_itr->quantity);
 		print("memo:", payroll_itr->memo);
 		print("interval:", payroll_itr->interval);

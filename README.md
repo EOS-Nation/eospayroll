@@ -1,6 +1,6 @@
 # EOS Nation Payroll
 
-A simple payroll smart contract developed by [DenisCarriere](https://github.com/DenisCarriere) and [Jmacktacular](https://github.com/Jmacktacular) for use EOS Nation's employee payroll.
+An EOSIO payroll smart contract developed by [DenisCarriere](https://github.com/DenisCarriere) and [Jmacktacular](https://github.com/Jmacktacular) used by EOS Nation's employee payroll system.
 
 ## ACTIONS
 

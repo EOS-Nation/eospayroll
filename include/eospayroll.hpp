@@ -7,7 +7,7 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract("eosnpayroll")]] eosnpayroll : public eosio::contract {
+class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 	public:
 		using contract::contract;
 
@@ -18,7 +18,7 @@ class [[eosio::contract("eosnpayroll")]] eosnpayroll : public eosio::contract {
          * @param {name} code - The code name of the action this contract is processing.
          * @param {datastream} ds - The datastream used
          */
-        eosnpayroll( name receiver, name code, eosio::datastream<const char*> ds )
+        eospayroll( name receiver, name code, eosio::datastream<const char*> ds )
             : contract( receiver, code, ds ),
                 _payee( receiver, receiver.value ),
 				_currency( receiver, receiver.value ),

@@ -1,4 +1,4 @@
-#include "eosnpayroll.hpp"
+#include "eospayroll.hpp"
 
 #include "currency.cpp"
 #include "payee.cpp"
