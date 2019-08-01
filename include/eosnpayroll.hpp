@@ -26,7 +26,7 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
         {}
 
 		/**
-		 * ACTION setpayee
+		 * ACTION `setpayee`
 		 *
 		 * Set payee details to EOS payroll with paid currency preferences
 		 *
@@ -34,26 +34,26 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 * @param {symbol_code} currency - EOSIO symbol currency being paid (ex: "USD", "CAD", "RMB")
 		 * @example
 		 *
-		 * setpayer( "myaccount", "CAD" );
+		 * setpayer( "payee.accnt", "CAD" );
 		 */
         [[eosio::action]]
 		void setpayee( name name, symbol_code currency );
 
 		/**
-		 * ACTION rmvpayee
+		 * ACTION `rmvpayee`
 		 *
 		 * Removes payee from EOS payroll
 		 *
 		 * @param {name} name - EOSIO name of payee to be removed
 		 * @example
 		 *
-		 * rmvpayee( "myaccount" );
+		 * rmvpayee( "payee.accnt" );
 		 */
 		[[eosio::action]]
 		void rmvpayee( name name );
 
 		/**
-		 * ACTION setcurrency
+		 * ACTION `setcurrency`
 		 *
 		 * Set currency rates
 		 *
@@ -66,7 +66,7 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		void setcurrency( asset rate );
 
 		/**
-		 * ACTION rmvcurrency
+		 * ACTION `rmvcurrency`
 		 *
 		 * Removes currency rate from EOS payroll
 		 *
@@ -79,7 +79,7 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		void rmvcurrency( symbol_code currency );
 
 		/**
-		 * ACTION addpayroll
+		 * ACTION `addpayroll`
 		 *
 		 * Add payroll details for payee's payouts per interval period
 		 *
@@ -90,7 +90,7 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 * @param {uint64_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 		 * @example
 		 *
-		 * addpayroll( "sender", "payee", "100.00 CAD", "weekly salary", 604800 );
+		 * addpayroll( "sender.accnt", "payee.accnt", "100.00 CAD", "weekly salary", 604800 );
 		 */
         [[eosio::action]]
 		void addpayroll( name sender,
@@ -100,7 +100,7 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 						 uint64_t interval );
 
 		/**
-		 * ACTION rmvpayroll
+		 * ACTION `rmvpayroll`
 		 *
 		 * Removes payroll from EOS payroll table
 		 *
@@ -112,24 +112,24 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
         [[eosio::action]]
 		void rmvpayroll( uint64_t id );
 
-		// /**
-		//  * ACTION payout
-		//  */
-		// [[eosio::action]]
-		// void payout( name _self,
-		// 			 name payee_name,
-		// 			 uint64_t pay_rate,
-		// 			 uint8_t pay_interval,
-		// 			 uint32_t last_pay,
-		// 			 name currency_name,
-		// 			 uint64_t payee_id,
-		// 			 string memo );
+		/**
+		 * ACTION `payout`
+		 *
+		 * Performs payouts per sender's payroll
+		 *
+		 * `eosio.code@active` must be defined in sender's permission
+		 *
+		 * @param {name} sender - senders which authorizes payroll
+		 * @example
+		 */
+		[[eosio::action]]
+		void payout( name sender );
 
 	private:
 		/**
-		 * TABLE payee
+		 * TABLE `payee`
 		 *
-		 * Table containing all info related to the payees
+		 * Contains all info related to the payees
 		 *
 		 * @param {name} name - EOSIO name of payee
 		 * @param {symbol_code} currency - preferred currency for payout
@@ -148,9 +148,9 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		};
 
 		/**
-		 * TABLE rate
+		 * TABLE `rate`
 		 *
-		 * Table containing all info related to the currency rates
+		 * Contains all info related to the currency rates
 		 *
 		 * @param {symbol_code} currency - currency code (ex: "CAD")
 		 * @param {asset} rate - rate of currency valued in EOS (ex: "4.56 CAD")
@@ -172,13 +172,13 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		};
 
 		/**
-		 * TABLE payroll
+		 * TABLE `payroll`
 		 *
-		 * Table containing all info related to the payroll
+		 * Contains all info related to the payroll
 		 *
 		 * @param {uint64_t} id - unique identifier of payroll
-		 * @param {name} from - name of payor
-		 * @param {name} to - name of payee
+		 * @param {name} sender - account name of sender
+		 * @param {name} payee - account name of payee
 		 * @param {asset} quantity - quantity amount to be paid per payout period  (ex: "100.00 CAD")
 		 * @param {uint64_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 		 * @param {string} memo - memo used when sending transfer
@@ -187,8 +187,8 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 * @example
 		 * {
 		 *   "id": 0,
-		 *   "sender": "fromaccount",
-		 *   "receiver": "toaccount",
+		 *   "sender": "sender.accnt",
+		 *   "payee": "payee.accnt",
 		 *   "quantity": "100.00 CAD",
 		 *   "interval": 604800,
 		 *   "memo": "weekly salary",
@@ -197,8 +197,8 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 */
 	    struct [[eosio::table("payroll")]] payroll_row {
 			uint64_t        id;
-			name			from;
-			name			receiver;
+			name			sender;
+			name			payee;
 			asset			quantity;
 			string			memo;
 			uint64_t		interval;

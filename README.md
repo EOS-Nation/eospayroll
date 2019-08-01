@@ -29,7 +29,7 @@ Set payee details to EOS payroll with paid currency preferences
 ### example
 
 ```js
-setpayer( "myaccount", "CAD" );
+setpayer( "payee.accnt", "CAD" );
 ```
 
 ### ACTION `rmvpayee`
@@ -43,7 +43,7 @@ Removes payee from EOS payroll
 ### example
 
 ```js
-rmvpayee( "myaccount" );
+rmvpayee( "payee.accnt" );
 ```
 
 ### ACTION `setcurrency`
@@ -89,7 +89,7 @@ Add payroll details for payee's payouts per interval period
 ### example
 
 ```js
-addpayroll( "sender", "payee", "100.00 CAD", "weekly salary", 604800 );
+addpayroll( "sender.accnt", "payee.accnt", "100.00 CAD", "weekly salary", 604800 );
 ```
 
 ### ACTION `rmvpayroll`
@@ -108,7 +108,7 @@ rmvpayroll( 0 );
 
 ### TABLE `payee`
 
-Table containing all info related to the payees
+Contains all info related to the payees
 
 ### params
 
@@ -119,14 +119,14 @@ Table containing all info related to the payees
 
 ```json
 {
-    "name": "myaccount",
+    "name": "payee.accnt",
     "currency": "CAD"
 }
 ```
 
 ### TABLE `rate`
 
-Table containing all info related to the currency rates
+Contains all info related to the currency rates
 
 ### params
 
@@ -146,7 +146,7 @@ Table containing all info related to the currency rates
 
 ### TABLE `payroll`
 
-Table containing all info related to the payroll
+Contains all info related to the payroll
 
 ### params
 
@@ -163,8 +163,8 @@ Table containing all info related to the payroll
 ```json
 {
     "id": 0,
-    "from": "fromaccount",
-    "to": "toaccount",
+    "sender": "sender.accnt",
+    "payee": "payee.accnt",
     "quantity": "100.00 CAD",
     "interval": 604800,
     "memo": "weekly salary",
