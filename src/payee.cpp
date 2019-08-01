@@ -4,8 +4,8 @@
 void eospayroll::setpayee( name name, symbol_code currency )
 {
 	check( has_auth( name ) || has_auth( get_self() ), "missing required authority");
-    check( currency.is_valid(), "currency symbol_code is not valid");
-	check( is_account( name ), "account does not exist");
+    check( currency.is_valid(), "[currency] symbol_code is not valid");
+	check( is_account( name ), "[name] account does not exist");
     check_currency_exists( currency );
 
     if (payee_exists( name )) {
@@ -27,30 +27,35 @@ void eospayroll::rmvpayee( name name )
     // TO-DO also remove payee from payroll table
 }
 
-void eospayroll::erase_payee( name name ) {
+void eospayroll::erase_payee( name name )
+{
     auto payee_itr = _payee.find(name.value);
 	_payee.erase(payee_itr);
 }
 
-void eospayroll::emplace_payee( name name, symbol_code currency ) {
+void eospayroll::emplace_payee( name name, symbol_code currency )
+{
     _payee.emplace( get_self(), [&](auto& row) {
         row.name        = name;
         row.currency    = currency;
     });
 }
 
-void eospayroll::modify_payee( name name, symbol_code currency ) {
+void eospayroll::modify_payee( name name, symbol_code currency )
+{
     auto payee_itr = _payee.find( name.value );
     _payee.modify( payee_itr, get_self(), [&](auto& row) {
         row.currency    = currency;
     });
 }
 
-bool eospayroll::payee_exists( name name ) {
+bool eospayroll::payee_exists( name name )
+{
     auto payee_itr = _payee.find( name.value );
     return payee_itr != _payee.end();
 }
 
-void eospayroll::check_payee_exists( name name ) {
+void eospayroll::check_payee_exists( name name )
+{
     check( payee_exists( name ), "[payee.name] no matching results" );
 }
