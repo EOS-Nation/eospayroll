@@ -4,7 +4,20 @@ A simple payroll smart contract developed by [DenisCarriere](https://github.com/
 
 ## ACTIONS
 
-### ACTION setpayee
+- [`setpayee`](#action-setpayee)
+- [`rmvpayee`](#action-rmvpayee)
+- [`setcurrency`](#action-setcurrency)
+- [`rmvcurrency`](#action-rmvcurrency)
+- [`addpayroll`](#action-addpayroll)
+- [`rmvpayroll`](#action-rmvpayroll)
+
+## TABLES
+
+- [`payee`](#table-payee)
+- [`rate`](#table-rate)
+- [`payroll`](#table-payroll)
+
+### ACTION `setpayee`
 
 Set payee details to EOS payroll with paid currency preferences
 
@@ -19,7 +32,7 @@ Set payee details to EOS payroll with paid currency preferences
 setpayer( "myaccount", "CAD" );
 ```
 
-### ACTION rmvpayee
+### ACTION `rmvpayee`
 
 Removes payee from EOS payroll
 
@@ -33,7 +46,7 @@ Removes payee from EOS payroll
 rmvpayee( "myaccount" );
 ```
 
-### ACTION setcurrency
+### ACTION `setcurrency`
 
 Set currency rates
 
@@ -47,7 +60,7 @@ Set currency rates
 setcurrency( "4.56 CAD" );
 ```
 
-### ACTION rmvcurrency
+### ACTION `rmvcurrency`
 
 Removes currency rate from EOS payroll
 
@@ -61,7 +74,7 @@ Removes currency rate from EOS payroll
 rmvcurrency( "CAD" );
 ```
 
-### ACTION addpayroll
+### ACTION `addpayroll`
 
 Add payroll details for payee's payouts per interval period
 
@@ -79,7 +92,7 @@ Add payroll details for payee's payouts per interval period
 addpayroll( "fromaccount", "toaccount", "100.00 CAD", "weekly salary", 604800 );
 ```
 
-### ACTION rmvpayroll
+### ACTION `rmvpayroll`
 
 Removes payroll from EOS payroll table
 
@@ -93,7 +106,7 @@ Removes payroll from EOS payroll table
 rmvpayroll( 0 );
 ```
 
-### TABLE payee
+### TABLE `payee`
 
 Table containing all info related to the payees
 
@@ -111,7 +124,7 @@ Table containing all info related to the payees
 }
 ```
 
-### TABLE rate
+### TABLE `rate`
 
 Table containing all info related to the currency rates
 
@@ -131,7 +144,7 @@ Table containing all info related to the currency rates
 }
 ```
 
-### TABLE payroll
+### TABLE `payroll`
 
 Table containing all info related to the payroll
 
