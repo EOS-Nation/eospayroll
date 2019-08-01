@@ -1,7 +1,7 @@
 /**
  * ACTION setpayee
  */
-void eospayroll::setpayee( name name, symbol_code currency )
+void eosnpayroll::setpayee( name name, symbol_code currency )
 {
 	check( has_auth( name ) || has_auth( get_self() ), "missing required authority");
     check( currency.is_valid(), "[currency] symbol_code is not valid");
@@ -18,7 +18,7 @@ void eospayroll::setpayee( name name, symbol_code currency )
 /**
  * ACTION rmvpayee
  */
-void eospayroll::rmvpayee( name name )
+void eosnpayroll::rmvpayee( name name )
 {
     check( has_auth( name ) || has_auth( get_self() ), "missing required authority");
 	require_auth( get_self() );
@@ -27,13 +27,13 @@ void eospayroll::rmvpayee( name name )
     // TO-DO also remove payee from payroll table
 }
 
-void eospayroll::erase_payee( name name )
+void eosnpayroll::erase_payee( name name )
 {
     auto payee_itr = _payee.find(name.value);
 	_payee.erase(payee_itr);
 }
 
-void eospayroll::emplace_payee( name name, symbol_code currency )
+void eosnpayroll::emplace_payee( name name, symbol_code currency )
 {
     _payee.emplace( get_self(), [&](auto& row) {
         row.name        = name;
@@ -41,7 +41,7 @@ void eospayroll::emplace_payee( name name, symbol_code currency )
     });
 }
 
-void eospayroll::modify_payee( name name, symbol_code currency )
+void eosnpayroll::modify_payee( name name, symbol_code currency )
 {
     auto payee_itr = _payee.find( name.value );
     _payee.modify( payee_itr, get_self(), [&](auto& row) {
@@ -49,13 +49,13 @@ void eospayroll::modify_payee( name name, symbol_code currency )
     });
 }
 
-bool eospayroll::payee_exists( name name )
+bool eosnpayroll::payee_exists( name name )
 {
     auto payee_itr = _payee.find( name.value );
     return payee_itr != _payee.end();
 }
 
-void eospayroll::check_payee_exists( name name )
+void eosnpayroll::check_payee_exists( name name )
 {
     check( payee_exists( name ), "[name] no matching payee results" );
 }

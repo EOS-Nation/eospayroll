@@ -1,14 +1,21 @@
-
-void eospayroll::payout( name sender )
+/**
+ * ACTION payout
+ */
+void eosnpayroll::payout( name sender )
 {
 	require_auth( sender );
 
     auto by_sender = _payroll.get_index<"bysender"_n>();
-    auto payroll_itr = by_sender.find( sender );
+    auto payroll_itr = by_sender.find( sender.value );
 	check( payroll_itr == by_sender.end(), "no payroll entries found");
 
     while (payroll_itr != by_sender.end()){
-        
+		print("sender:", payroll_itr->sender);
+		print("payee:", payroll_itr->payee);
+		print("quantity:", payroll_itr->quantity);
+		print("memo:", payroll_itr->memo);
+		print("interval:", payroll_itr->interval);
+		print("timestamp:", payroll_itr->timestamp.sec_since_epoch());
     }
 
 	// 	check(last_pay <= pay_delay, "Paid too recently!");

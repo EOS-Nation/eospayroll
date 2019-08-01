@@ -7,7 +7,7 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
+class [[eosio::contract("eosnpayroll")]] eosnpayroll : public eosio::contract {
 	public:
 		using contract::contract;
 
@@ -18,7 +18,7 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
          * @param {name} code - The code name of the action this contract is processing.
          * @param {datastream} ds - The datastream used
          */
-        eospayroll( name receiver, name code, eosio::datastream<const char*> ds )
+        eosnpayroll( name receiver, name code, eosio::datastream<const char*> ds )
             : contract( receiver, code, ds ),
                 _payee( receiver, receiver.value ),
 				_currency( receiver, receiver.value ),
@@ -204,13 +204,18 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 			uint64_t		interval;
 			time_point_sec	timestamp;
 
-			auto primary_key() const { return id; }
+			auto 		primary_key() const { return id; }
+			uint64_t  	by_sender() const { return sender.value; }
+
 		};
 
 		// Multi-indexes
 		using payee_table = multi_index <"payee"_n, payee_row>;
 		using currency_table = multi_index <"currency"_n, currency_row>;
-		using payroll_table = multi_index <"payroll"_n, payroll_row>;
+
+		typedef multi_index<"payroll"_n, payroll_row,
+            indexed_by<"bysender"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_sender> >
+        > payroll_table;
 
 		payee_table _payee;
 		currency_table _currency;
