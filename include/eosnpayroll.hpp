@@ -27,30 +27,70 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 
 		/**
 		 * ACTION setpayee
+		 *
+		 * Set payee details to EOS payroll with paid currency preferences
+		 *
+		 * @param {name} name - EOSIO name of payee
+		 * @param {symbol_code} currency - EOSIO symbol currency being paid (ex: "USD", "CAD", "RMB")
+		 * @example
+		 *
+		 * setpayer( "myaccount", "CAD" );
 		 */
         [[eosio::action]]
 		void setpayee( name name, symbol_code currency );
 
 		/**
 		 * ACTION rmvpayee
+		 *
+		 * Removes payee from EOS payroll
+		 *
+		 * @param {name} name - EOSIO name of payee to be removed
+		 * @example
+		 *
+		 * rmvpayee( "myaccount" );
 		 */
 		[[eosio::action]]
 		void rmvpayee( name name );
 
 		/**
 		 * ACTION setcurrency
+		 *
+		 * Set currency rates
+		 *
+		 * @param {asset} rate - currency rate based on EOS price (ex: "4.56 CAD")
+		 * @example
+		 *
+		 * setcurrency( "4.56 CAD" );
 		 */
         [[eosio::action]]
 		void setcurrency( asset rate );
 
 		/**
 		 * ACTION rmvcurrency
+		 *
+		 * Removes currency rate from EOS payroll
+		 *
+		 * @param {symbol_code} currency - EOSIO symbol code currency (ex: "CAD")
+		 * @example
+		 *
+		 * rmvcurrency( "CAD" );
 		 */
         [[eosio::action]]
 		void rmvcurrency( symbol_code currency );
 
 		/**
 		 * ACTION addpayroll
+		 *
+		 * Add payroll details for payee's payouts per interval period
+		 *
+		 * @param {name} from - name of payor
+		 * @param {name} to - name of payee
+		 * @param {asset} quantity - quantity amount to be paid per payout period  (ex: "100.00 CAD")
+		 * @param {string} memo - memo used when sending transfer
+		 * @param {uint64_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+		 * @example
+		 *
+		 * addpayroll( "fromaccount", "toaccount", "100.00 CAD", "weekly salary", 604800 );
 		 */
         [[eosio::action]]
 		void addpayroll( name from,
@@ -61,6 +101,13 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 
 		/**
 		 * ACTION rmvpayroll
+		 *
+		 * Removes payroll from EOS payroll table
+		 *
+		 * @param {uint64_t} id - payroll unique identifier
+		 * @example
+		 *
+		 * rmvpayroll( 0 );
 		 */
         [[eosio::action]]
 		void rmvpayroll( uint64_t id );
@@ -84,8 +131,8 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 *
 		 * Table containing all info related to the payees
 		 *
-		 * @param {name} EOSIO name of payee
-		 * @param {symbol_code} preferred currency for payout
+		 * @param {name} name - EOSIO name of payee
+		 * @param {symbol_code} currency - preferred currency for payout
 		 *
 		 * @example
 		 * {

@@ -1,16 +1,5 @@
 /**
  * ACTION addpayroll
- *
- * Add payroll details for payee's payouts per interval period
- *
- * @param {name} from - name of payor
- * @param {name} to - name of payee
- * @param {asset} quantity - quantity amount to be paid per payout period  (ex: "100.00 CAD")
- * @param {string} memo - memo used when sending transfer
- * @param {uint64_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
- * @example
- *
- * addpayroll( "fromaccount", "toaccount", "100.00 CAD", "weekly salary", 604800 );
  */
 void eospayroll::addpayroll( name from, name to, asset quantity, string memo, uint64_t interval )
 {
@@ -23,13 +12,6 @@ void eospayroll::addpayroll( name from, name to, asset quantity, string memo, ui
 
 /**
  * ACTION rmvpayroll
- *
- * Removes payroll from EOS payroll table
- *
- * @param {uint64_t} id - payroll unique identifier
- * @example
- *
- * rmvpayroll( 0 );
  */
 void eospayroll::rmvpayroll( uint64_t id )
 {

@@ -1,15 +1,5 @@
 /**
  * ACTION setpayee
- *
- * Set payee details to EOS payroll with paid currency preferences
- *
- * Zero the total quantity asset of `total_payout`
- *
- * @param {name} name - EOSIO name of payee
- * @param {symbol_code} currency - EOSIO symbol currency being paid (ex: "USD", "CAD", "RMB")
- * @example
- *
- * setpayer( "myaccount", "CAD" );
  */
 void eospayroll::setpayee( name name, symbol_code currency )
 {
@@ -27,19 +17,14 @@ void eospayroll::setpayee( name name, symbol_code currency )
 
 /**
  * ACTION rmvpayee
- *
- * Removes payee from EOS payroll
- *
- * @param {name} name - EOSIO name of payee to be removed
- * @example
- *
- * rmvpayee( "myaccount" );
  */
 void eospayroll::rmvpayee( name name )
 {
+    check( has_auth( name ) || has_auth( get_self() ), "missing required authority");
 	require_auth( get_self() );
     check_payee_exists( name );
     erase_payee( name );
+    // TO-DO also remove payee from payroll table
 }
 
 void eospayroll::erase_payee( name name ) {

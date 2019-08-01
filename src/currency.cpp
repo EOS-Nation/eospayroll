@@ -1,12 +1,5 @@
 /**
  * ACTION setcurrency
- *
- * Set currency rates
- *
- * @param {asset} rate - currency rate based on EOS price (ex: "4.56 CAD")
- * @example
- *
- * setcurrency( "4.56 CAD" );
  */
 void eospayroll::setcurrency( asset rate )
 {
@@ -24,13 +17,6 @@ void eospayroll::setcurrency( asset rate )
 
 /**
  * ACTION rmvcurrency
- *
- * Removes currency rate from EOS payroll
- *
- * @param {symbol_code} currency - EOSIO symbol code currency (ex: "CAD")
- * @example
- *
- * rmvcurrency( "CAD" );
  */
 void eospayroll::rmvcurrency( symbol_code currency )
 {
