@@ -57,7 +57,7 @@ bool eospayroll::currency_exists( symbol_code currency )
 
 void eospayroll::check_currency_exists( symbol_code currency )
 {
-    check( currency_exists( currency ), "[currency] no matching results" );
+    check( currency_exists( currency ), "[symbol_code] no matching currency results" );
 }
 
 asset eospayroll::zero_currency( symbol_code currency )

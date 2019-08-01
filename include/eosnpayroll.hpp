@@ -30,7 +30,7 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 *
 		 * Set payee details to EOS payroll with paid currency preferences
 		 *
-		 * @param {name} name - EOSIO name of payee
+		 * @param {name} name - account name of payee
 		 * @param {symbol_code} currency - EOSIO symbol currency being paid (ex: "USD", "CAD", "RMB")
 		 * @example
 		 *
@@ -83,18 +83,18 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 *
 		 * Add payroll details for payee's payouts per interval period
 		 *
-		 * @param {name} from - name of payor
-		 * @param {name} to - name of payee
+		 * @param {name} sender - account name of sender
+		 * @param {name} payee - account name of payee
 		 * @param {asset} quantity - quantity amount to be paid per payout period  (ex: "100.00 CAD")
 		 * @param {string} memo - memo used when sending transfer
 		 * @param {uint64_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 		 * @example
 		 *
-		 * addpayroll( "fromaccount", "toaccount", "100.00 CAD", "weekly salary", 604800 );
+		 * addpayroll( "sender", "payee", "100.00 CAD", "weekly salary", 604800 );
 		 */
         [[eosio::action]]
-		void addpayroll( name from,
-						 name to,
+		void addpayroll( name sender,
+						 name payee,
 					     asset quantity,
 						 string memo,
 						 uint64_t interval );
@@ -187,8 +187,8 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 * @example
 		 * {
 		 *   "id": 0,
-		 *   "from": "fromaccount",
-		 *   "to": "toaccount",
+		 *   "sender": "fromaccount",
+		 *   "receiver": "toaccount",
 		 *   "quantity": "100.00 CAD",
 		 *   "interval": 604800,
 		 *   "memo": "weekly salary",
@@ -198,7 +198,7 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 	    struct [[eosio::table("payroll")]] payroll_row {
 			uint64_t        id;
 			name			from;
-			name			to;
+			name			receiver;
 			asset			quantity;
 			string			memo;
 			uint64_t		interval;

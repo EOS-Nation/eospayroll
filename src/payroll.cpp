@@ -1,14 +1,14 @@
 /**
  * ACTION addpayroll
  */
-void eospayroll::addpayroll( name from, name to, asset quantity, string memo, uint64_t interval )
+void eospayroll::addpayroll( name sender, name payee, asset quantity, string memo, uint64_t interval )
 {
-	require_auth( from );
+	require_auth( sender );
     check( quantity.is_valid(), "[quantity] is not valid");
-    check( is_account( from ), "[from] account does not exist");
-	check_payee_exists( to );
+    check( is_account( sender ), "[sender] account does not exist");
+	check_payee_exists( payee );
     check_currency_exists( quantity.symbol.code() );
-    emplace_payroll( from, to, quantity, memo, interval );
+    emplace_payroll( sender, payee, quantity, memo, interval );
 }
 
 /**
@@ -27,14 +27,14 @@ void eospayroll::erase_payroll( uint64_t id )
 	_payroll.erase( payroll_itr );
 }
 
-uint64_t eospayroll::emplace_payroll( name from, name to, asset quantity, string memo, uint64_t interval )
+uint64_t eospayroll::emplace_payroll( name sender, name payee, asset quantity, string memo, uint64_t interval )
 {
     const uint64_t id = _payroll.available_primary_key();
 
     _payroll.emplace( get_self(), [&](auto& row) {
         row.id              = id;
-        row.from            = from;
-        row.to              = to;
+        row.sender          = sender;
+        row.payee           = payee;
         row.quantity        = quantity;
         row.memo            = memo;
         row.interval        = interval;
@@ -60,5 +60,5 @@ bool eospayroll::payroll_exists( uint64_t id )
 
 void eospayroll::check_payroll_exists( uint64_t id )
 {
-    check( payroll_exists( id ), "[payroll.id] no matching results" );
+    check( payroll_exists( id ), "[id] no matching payroll results" );
 }

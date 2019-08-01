@@ -80,8 +80,8 @@ Add payroll details for payee's payouts per interval period
 
 ### params
 
-- `{name} from` - name of payor
-- `{name} to` - name of payee
+- `{name} sender` - account name of sender
+- `{name} payee` - account name of payee
 - `{asset} quantity` - quantity amount to be paid per payout period  (ex: "100.00 CAD")
 - `{string} memo` - memo used when sending transfer
 - `{uint64_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
@@ -89,7 +89,7 @@ Add payroll details for payee's payouts per interval period
 ### example
 
 ```js
-addpayroll( "fromaccount", "toaccount", "100.00 CAD", "weekly salary", 604800 );
+addpayroll( "sender", "payee", "100.00 CAD", "weekly salary", 604800 );
 ```
 
 ### ACTION `rmvpayroll`
@@ -112,7 +112,7 @@ Table containing all info related to the payees
 
 ### params
 
-- `{name} name` - EOSIO name of payee
+- `{name} name` - account name of payee
 - `{symbol_code} currency` - preferred currency for payout
 
 ### example
@@ -151,8 +151,8 @@ Table containing all info related to the payroll
 ### params
 
 - `{uint64_t} id` - unique identifier of payroll
-- `{name} from` - name of payor
-- `{name} to` - name of payee
+- `{name} sender` - account name of sender
+- `{name} payee` - account name of payee
 - `{asset} quantity` - quantity amount to be paid per payout period  (ex: "100.00 CAD")
 - `{uint64_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 - `{string} memo` - memo used when sending transfer

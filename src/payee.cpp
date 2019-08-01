@@ -57,5 +57,5 @@ bool eospayroll::payee_exists( name name )
 
 void eospayroll::check_payee_exists( name name )
 {
-    check( payee_exists( name ), "[payee.name] no matching results" );
+    check( payee_exists( name ), "[name] no matching payee results" );
 }
