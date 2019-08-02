@@ -59,3 +59,9 @@ void eospayroll::check_payee_exists( name name )
 {
     check( payee_exists( name ), "[name] no matching payee results" );
 }
+
+symbol_code eospayroll::get_payee_currency( name name )
+{
+    auto payee_itr = _payee.find( name.value );
+    return payee_itr->currency;
+}

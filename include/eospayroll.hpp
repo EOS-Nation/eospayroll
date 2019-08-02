@@ -3,6 +3,7 @@
 #include <eosio/eosio.hpp>
 #include <eosio/print.hpp>
 #include <eosio/system.hpp>
+#include <eosio.token.hpp>
 
 using namespace eosio;
 using namespace std;
@@ -22,7 +23,8 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
             : contract( receiver, code, ds ),
                 _payee( receiver, receiver.value ),
 				_currency( receiver, receiver.value ),
-				_payroll( receiver, receiver.value )
+				_payroll( receiver, receiver.value ),
+				_payout( receiver, receiver.value )
         {}
 
 		/**
@@ -83,21 +85,21 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 *
 		 * Add payroll details for payee's payouts per interval period
 		 *
-		 * @param {name} sender - account name of sender
-		 * @param {name} payee - account name of payee
+		 * @param {name} from - account name of sender
+		 * @param {name} to - account name of payee
 		 * @param {asset} quantity - quantity amount to be paid per payout period  (ex: "100.00 CAD")
 		 * @param {string} memo - memo used when sending transfer
-		 * @param {uint64_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+		 * @param {uint32_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 		 * @example
 		 *
 		 * addpayroll( "sender.accnt", "payee.accnt", "100.00 CAD", "weekly salary", 604800 );
 		 */
         [[eosio::action]]
-		void addpayroll( name sender,
-						 name payee,
+		void addpayroll( name from,
+						 name to,
 					     asset quantity,
 						 string memo,
-						 uint64_t interval );
+						 uint32_t interval );
 
 		/**
 		 * ACTION `rmvpayroll`
@@ -119,11 +121,13 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 *
 		 * `eosio.code@active` must be defined in sender's permission
 		 *
-		 * @param {name} sender - senders which authorizes payroll
+		 * @param {name} from - account name of sender which authorizes payroll
 		 * @example
+		 *
+		 * payout( "sender.acct" );
 		 */
 		[[eosio::action]]
-		void payout( name sender );
+		void payout( name from );
 
 	private:
 		/**
@@ -177,18 +181,18 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 * Contains all info related to the payroll
 		 *
 		 * @param {uint64_t} id - unique identifier of payroll
-		 * @param {name} sender - account name of sender
-		 * @param {name} payee - account name of payee
+		 * @param {name} from - account name of sender
+		 * @param {name} to - account name of payee
 		 * @param {asset} quantity - quantity amount to be paid per payout period  (ex: "100.00 CAD")
-		 * @param {uint64_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+		 * @param {uint32_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 		 * @param {string} memo - memo used when sending transfer
 		 * @param {time_point_sec} timestamp - last time payroll was paid
 		 *
 		 * @example
 		 * {
 		 *   "id": 0,
-		 *   "sender": "sender.accnt",
-		 *   "payee": "payee.accnt",
+		 *   "from": "sender.accnt",
+		 *   "to": "payee.accnt",
 		 *   "quantity": "100.00 CAD",
 		 *   "interval": 604800,
 		 *   "memo": "weekly salary",
@@ -197,46 +201,70 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		 */
 	    struct [[eosio::table("payroll")]] payroll_row {
 			uint64_t        id;
-			name			sender;
-			name			payee;
+			name			from;
+			name			to;
 			asset			quantity;
 			string			memo;
-			uint64_t		interval;
+			uint32_t		interval;
 			time_point_sec	timestamp;
 
 			auto 		primary_key() const { return id; }
-			uint64_t  	by_sender() const { return sender.value; }
+			uint64_t  	by_from() const { return from.value; }
+			uint64_t  	by_to() const { return to.value; }
+		};
 
+		/**
+		 * TABLE `payout`
+		 *
+		 * Contains all info related to the payout
+		 *
+		 * @param {uint64_t} id - unique identifier of payout
+		 * @param {name} from - account name of sender
+		 * @param {name} to - account name of payee
+		 * @param {asset} quantity - quantity amount to be paid per payout period  (ex: "100.00 CAD")
+		 * @param {uint32_t} interval - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+		 * @param {string} memo - memo used when sending transfer
+		 * @param {time_point_sec} timestamp - last time payout was paid
+		 *
+		 * @example
+		 * {
+		 *   "id": 0,
+		 *   "transaction": "8dba3ce623551b766efe77db7b3b9151627a3bb6bfa8b5fc1609ad8a152c83bd",
+		 *   "from": "sender.accnt",
+		 *   "to": "payee.accnt",
+		 *   "quantity": "10.0000 EOS",
+		 *   "memo": "weekly salary",
+		 *   "timestamp": "2019-07-30T22:21:51",
+		 *   "rate": "5.65 CAD"
+		 * }
+		 */
+	    struct [[eosio::table("payout")]] payout_row {
+			uint64_t        id;
+			checksum256		transaction;
+			name			from;
+			name			to;
+			asset			quantity;
+			string			memo;
+			time_point_sec	timestamp;
+			asset 			rate;
+
+			auto 		primary_key() const { return id; }
 		};
 
 		// Multi-indexes
 		using payee_table = multi_index <"payee"_n, payee_row>;
 		using currency_table = multi_index <"currency"_n, currency_row>;
+		using payout_table = multi_index <"payout"_n, payout_row>;
 
 		typedef multi_index<"payroll"_n, payroll_row,
-            indexed_by<"bysender"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_sender> >
+            indexed_by<"byfrom"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_from> >,
+			indexed_by<"byto"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_to> >
         > payroll_table;
 
 		payee_table _payee;
 		currency_table _currency;
 		payroll_table _payroll;
-
-		// Static values for testing
-		// Oraclize can be used to grab EOS price (WIP)
-
-		uint64_t currency_value;
-
-		double can_to_eos = 5.41;
-
-		double usd_to_eos = 4.29;
-
-		double krn_to_eos = 38.85;
-
-		// Time values for pay delays, in seconds.
-
-		uint32_t now() { return current_time_point().sec_since_epoch(); }
-
-		uint32_t pay_delay = 0;
+		payout_table _payout;
 
 		// private methods
 
@@ -246,6 +274,7 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		void emplace_payee( name name, symbol_code currency );
 		void modify_payee( name name, symbol_code currency );
 		void erase_payee( name name );
+		symbol_code get_payee_currency( name name );
 
 		// currency
 		bool currency_exists( symbol_code currency );
@@ -254,11 +283,20 @@ class [[eosio::contract("eospayroll")]] eospayroll : public eosio::contract {
 		void modify_currency( asset rate );
 		void erase_currency( symbol_code currency );
 		asset zero_currency( symbol_code currency );
+		asset get_currency_rate( symbol_code currency );
 
 		// payroll
-		uint64_t emplace_payroll( name from, name to, asset quantity, string memo, uint64_t interval );
+		uint64_t emplace_payroll( name from, name to, asset quantity, string memo, uint32_t interval );
 		void erase_payroll( uint64_t id );
 		bool payroll_exists( uint64_t id );
 		void check_payroll_exists( uint64_t id );
 		void update_payroll_timestamp( uint64_t id );
+
+		// payout
+		uint64_t emplace_payout( name from, name to, asset quantity, string memo, asset rate );
+		time_point_sec calculate_payout_timestamp( uint32_t interval );
+		void transfer_eosio_token( name from, name to, asset quantity, string memo );
+
+		// utils
+		checksum256 get_trx_id();
 	};

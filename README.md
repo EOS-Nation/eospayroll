@@ -16,6 +16,7 @@ An EOSIO payroll smart contract developed by [DenisCarriere](https://github.com/
 - [`payee`](#table-payee)
 - [`rate`](#table-rate)
 - [`payroll`](#table-payroll)
+- [`payout`](#table-payout)
 
 ### ACTION `setpayee`
 
@@ -80,11 +81,11 @@ Add payroll details for payee's payouts per interval period
 
 ### params
 
-- `{name} sender` - account name of sender
-- `{name} payee` - account name of payee
+- `{name} from` - account name of sender
+- `{name} to` - account name of payee
 - `{asset} quantity` - quantity amount to be paid per payout period  (ex: "100.00 CAD")
 - `{string} memo` - memo used when sending transfer
-- `{uint64_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+- `{uint32_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 
 ### example
 
@@ -104,6 +105,22 @@ Removes payroll from EOS payroll table
 
 ```js
 rmvpayroll( 0 );
+```
+
+### ACTION `payout`
+
+Performs payouts per sender's payroll
+
+`eosio.code@active` must be defined in sender's permission
+
+### params
+
+- `{name} from` - account name of sender which authorizes payroll
+
+### example
+
+```js
+payout( "sender.acct" );
 ```
 
 ### TABLE `payee`
@@ -151,10 +168,10 @@ Contains all info related to the payroll
 ### params
 
 - `{uint64_t} id` - unique identifier of payroll
-- `{name} sender` - account name of sender
-- `{name} payee` - account name of payee
+- `{name} from` - account name of from
+- `{name} to` - account name of to
 - `{asset} quantity` - quantity amount to be paid per payout period  (ex: "100.00 CAD")
-- `{uint64_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+- `{uint32_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 - `{string} memo` - memo used when sending transfer
 - `{time_point_sec} timestamp` - last time payroll was paid
 
@@ -163,11 +180,39 @@ Contains all info related to the payroll
 ```json
 {
     "id": 0,
-    "sender": "sender.accnt",
-    "payee": "payee.accnt",
+    "from": "sender.accnt",
+    "to": "payee.accnt",
     "quantity": "100.00 CAD",
     "interval": 604800,
     "memo": "weekly salary",
     "timestamp": "2019-07-30T22:21:51"
+}
+```
+
+### TABLE `payout`
+
+Contains all info related to the payout
+
+- `{uint64_t} id` - unique identifier of payout
+- `{name} from` - account name of sender
+- `{name} to` - account name of payee
+- `{asset} quantity` - quantity amount to be paid per payout period  (ex: "100.00 CAD")
+- `{uint32_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+- `{string} memo` - memo used when sending transfer
+- `{time_point_sec} timestamp` - last time payout was paid
+
+
+### example
+
+```json
+{
+  "id": 0,
+  "transaction": "8dba3ce623551b766efe77db7b3b9151627a3bb6bfa8b5fc1609ad8a152c83bd",
+  "from": "sender.accnt",
+  "to": "payee.accnt",
+  "quantity": "10.0000 EOS",
+  "memo": "weekly salary",
+  "timestamp": "2019-07-30T22:21:51",
+  "rate": "5.65 CAD"
 }
 ```

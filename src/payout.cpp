@@ -1,47 +1,67 @@
 /**
  * ACTION payout
  */
-void eospayroll::payout( name sender )
+void eospayroll::payout( name from )
 {
-	require_auth( sender );
+	require_auth( from );
 
-	print("foo");
-	print("foo","bar");
+	bool payout_found = false;
+    auto by_from = _payroll.get_index<"byfrom"_n>();
+    for (auto payroll_itr = by_from.lower_bound(from.value), end_itr = by_from.upper_bound(from.value); payroll_itr != end_itr; ++payroll_itr) {
+		// payroll attributes
+		const name to = payroll_itr->to;
+		const string memo = payroll_itr->memo;
+		const asset quantity = asset{10000, symbol{"EOS", 4}};
+		const uint32_t interval = payroll_itr->interval;
 
-    auto by_sender = _payroll.get_index<"bysender"_n>();
-    for (auto payroll_itr = by_sender.lower_bound(sender.value), end_itr = by_sender.upper_bound(sender.value); payroll_itr != end_itr; ++payroll_itr) {
-		print("sender:", payroll_itr->sender, "\n");
-		print("payee:", payroll_itr->payee, "\n");
-		print("quantity:", payroll_itr->quantity);
-		print("memo:", payroll_itr->memo);
-		print("interval:", payroll_itr->interval);
-		print("timestamp:", payroll_itr->timestamp.sec_since_epoch());
+		// get currency rate
+		check_payee_exists( to );
+		symbol_code currency = get_payee_currency( to );
+		asset rate = get_currency_rate( currency );
+
+		// skip current payroll if timestamp is in the future
+		if ( payroll_itr->timestamp > current_time_point() ) continue;
+
+		// send eosio.token EOS transfer
+		transfer_eosio_token( from, to, quantity, memo );
+
+		// Update timestamp by interval amount
+		by_from.modify( payroll_itr, get_self(), [&](auto& row) {
+			row.timestamp = calculate_payout_timestamp( interval );
+		});
+
+		emplace_payout( from, to, quantity, memo, rate );
+		payout_found = true;
     }
-
-	// 	check(last_pay <= pay_delay, "Paid too recently!");
-
-	// 	/*Error message with which account and by what delay would be better*/
-
-    // 	pay_rate = pay_rate * currency_value;
-
-	// 	asset pay_amount(pay_rate, eos_symbol);
-
-	// 	/*Transfer of EOS to payees based on their calculated pay amount.
-	// 	Memo is currently whatever was entered during addmodpayee. We
-	// 	could concatenate a custom memo with times, the number of times paid++, roles,
-	// 	or other data (WIP).*/
-
-	// 	action( permission_level{ get_self(), "active"_n }, "eosio.token"_n, "transfer"_n,
-	// 		make_tuple( get_self(), // from
-	// 					payee_name, // to
-	// 					pay_amount, // quantity
-	// 					memo )      // memo
-	// 	).send();
-
-	// 	auto setter = [&]( auto& row ) {
-	// 		row.last_pay = now();
-	// 	};
-	// }
+	check(payout_found, "no payouts available during this timestamp");
 }
-/*There is also code for deffered transactions that will pay automatically
-after the pay delay has expired (WIP)*/
+
+uint64_t eospayroll::emplace_payout( name from, name to, asset quantity, string memo, asset rate )
+{
+	const uint64_t id = _payout.available_primary_key();
+    _payout.emplace( get_self(), [&](auto& row) {
+		row.id 			= id;
+		row.transaction = get_trx_id();
+        row.from       	= from;
+        row.to    		= to;
+		row.quantity    = quantity;
+		row.memo    	= memo;
+		row.timestamp   = current_time_point();
+		row.rate  		= rate;
+    });
+	return id;
+}
+
+time_point_sec eospayroll::calculate_payout_timestamp( uint32_t interval )
+{
+	return time_point_sec(interval + current_time_point().sec_since_epoch());
+}
+
+void eospayroll::transfer_eosio_token( name from, name to, asset quantity, string memo )
+{
+	// can specify the contract to send the action to as first argument
+	token::transfer_action transfer("eosio.token"_n, {from, "active"_n});
+
+	// transfer arguments are now passed as postional arguments
+	transfer.send(from, to, quantity, memo);
+}

@@ -65,3 +65,9 @@ asset eospayroll::zero_currency( symbol_code currency )
     const uint8_t precision = 2;
     return asset{0, symbol{currency, precision}};
 }
+
+asset eospayroll::get_currency_rate( symbol_code currency )
+{
+    auto currency_itr = _currency.find( currency.raw() );
+    return currency_itr->rate;
+}
