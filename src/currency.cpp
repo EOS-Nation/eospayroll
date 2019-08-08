@@ -3,7 +3,7 @@
  */
 void eospayroll::setcurrency( asset rate )
 {
-	require_auth( get_self() );
+    require_auth( get_self() );
     check( rate.is_valid(), "[rate] is not a valid EOSIO asset" );
     check( rate.symbol.precision() == 2, "[rate] precision must be 2");
     symbol_code currency = rate.symbol.code();
@@ -20,7 +20,7 @@ void eospayroll::setcurrency( asset rate )
  */
 void eospayroll::rmvcurrency( symbol_code currency )
 {
-	require_auth( get_self() );
+    require_auth( get_self() );
     currency_exists( currency );
     erase_currency( currency );
 }
@@ -28,7 +28,7 @@ void eospayroll::rmvcurrency( symbol_code currency )
 void eospayroll::erase_currency( symbol_code currency )
 {
     auto currency_itr = _currency.find(currency.raw());
-	_currency.erase(currency_itr);
+    _currency.erase(currency_itr);
 }
 
 void eospayroll::emplace_currency( asset rate )

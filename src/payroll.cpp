@@ -3,10 +3,10 @@
  */
 void eospayroll::addpayroll( name from, name to, asset quantity, string memo, uint32_t interval )
 {
-	require_auth( from );
+    require_auth( from );
     check( quantity.is_valid(), "[quantity] is not valid");
     check( is_account( from ), "[from] account does not exist");
-	check_payee_exists( to );
+    check_payee_exists( to );
     check_currency_exists( quantity.symbol.code() );
     check( get_payee_currency( to ) == quantity.symbol.code(), "[quantity] currency symbol_code does not match payee's preference");
     emplace_payroll( from, to, quantity, memo, interval );
@@ -19,14 +19,14 @@ void eospayroll::rmvpayroll( uint64_t id )
 {
     check_payroll_exists( id );
     auto payroll_itr = _payroll.find( id );
-	require_auth( payroll_itr->from );
+    require_auth( payroll_itr->from );
     erase_payroll( id );
 }
 
 void eospayroll::erase_payroll( uint64_t id )
 {
     auto payroll_itr = _payroll.find( id );
-	_payroll.erase( payroll_itr );
+    _payroll.erase( payroll_itr );
 }
 
 uint64_t eospayroll::emplace_payroll( name from, name to, asset quantity, string memo, uint32_t interval )
