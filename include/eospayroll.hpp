@@ -244,6 +244,7 @@ private:
         name			from;
         name			to;
         asset			quantity;
+        asset			eos_quantity;
         string			memo;
         time_point_sec	timestamp;
         asset 			rate;
@@ -293,7 +294,7 @@ private:
     void update_payroll_timestamp( uint64_t id );
 
     // payout
-    uint64_t emplace_payout( name from, name to, asset quantity, string memo, asset rate );
+    uint64_t emplace_payout( name from, name to, asset quantity, asset eos_quantity, string memo, asset rate );
     time_point_sec calculate_payout_timestamp( uint32_t interval );
     void transfer_eosio_token( name from, name to, asset quantity, string memo );
 
