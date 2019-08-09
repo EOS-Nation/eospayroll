@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-SENDER=eospayroll
-PAYEE=bob
 CODE=eospayroll
+SENDER=alice
+PAYEE=bob
+TOKEN=eosio.token
 ENDPOINT=http://localhost:8888
 
 # setcurrency
@@ -23,29 +24,26 @@ cleos -u $ENDPOINT push action $CODE setpayee \
 # addpayroll
 cleos -u $ENDPOINT push action $CODE addpayroll \
     "[\"$SENDER\", \"$PAYEE\", \"100.00 USD\", \"delete me\", 60]" \
-    -p $CODE
+    -p $SENDER
 
 # addpayroll
 cleos -u $ENDPOINT push action $CODE addpayroll \
     "[\"$SENDER\", \"$PAYEE\", \"250.00 USD\", \"test payroll using USD\", 60]" \
-    -p $CODE
+    -p $SENDER
 
 # addpayroll
 cleos -u $ENDPOINT push action $CODE addpayroll \
     "[\"$SENDER\", \"$PAYEE\", \"250.00 USD\", \"test payroll using USD\", 300]" \
-    -p $CODE
+    -p $SENDER
 
 # addpayroll
 cleos -u $ENDPOINT push action $CODE addpayroll \
     "[\"$SENDER\", \"$PAYEE\", \"350.00 USD\", \"test payroll using USD\", 6000]" \
-    -p $CODE
+    -p $SENDER
 
 # rmvpayroll
 cleos -u $ENDPOINT push action $CODE rmvpayroll \
     "[0]" \
-    -p $CODE
+    -p $SENDER
 
-# payout
-cleos -u $ENDPOINT push action $CODE payout \
-    "[\"$SENDER\"]" \
-    -p $CODE
+cleos transfer $SENDER $CODE "3.0000 EOS"

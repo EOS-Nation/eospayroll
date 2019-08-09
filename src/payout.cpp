@@ -3,7 +3,7 @@
  */
 void eospayroll::payout( name from )
 {
-    require_auth( from );
+    require_auth( get_self() );
 
     bool payout_found = false;
     auto by_from = _payroll.get_index<"byfrom"_n>();
@@ -25,8 +25,8 @@ void eospayroll::payout( name from )
         if ( payroll_itr->timestamp > current_time_point() ) continue;
 
         // send eosio.token EOS transfer
-        token::transfer_action transfer("eosio.token"_n, {from, "active"_n});
-        transfer.send(from, to, eos_quantity, memo);
+        token::transfer_action transfer("eosio.token"_n, {get_self(), "active"_n});
+        transfer.send(get_self(), to, eos_quantity, memo);
 
         // Update timestamp by interval amount
         by_from.modify( payroll_itr, get_self(), [&](auto& row) {

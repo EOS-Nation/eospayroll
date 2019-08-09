@@ -124,10 +124,23 @@ public:
      * @param {name} from - account name of sender which authorizes payroll
      * @example
      *
-     * payout( "sender.acct" );
+     * cleos push action <code> payout ["sender.acct"]
      */
     [[eosio::action]]
     void payout( name from );
+
+    /**
+     * Notify contract when eosio.token deposits core symbol
+     *
+     * Used for token swap
+     */
+    [[eosio::on_notify("eosio.token::transfer")]]
+    void transfer( const name&    from,
+                   const name&    to,
+                   const asset&   quantity,
+                   const string&  memo );
+
+    using payout_action = eosio::action_wrapper<"payout"_n, &eospayroll::payout>;
 
 private:
     /**
