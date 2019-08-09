@@ -21,38 +21,10 @@ public:
      */
     eospayroll( name receiver, name code, eosio::datastream<const char*> ds )
         : contract( receiver, code, ds ),
-            _payee( receiver, receiver.value ),
             _currency( receiver, receiver.value ),
             _payroll( receiver, receiver.value ),
             _payout( receiver, receiver.value )
     {}
-
-    /**
-     * ACTION `setpayee`
-     *
-     * Set payee details to EOS payroll with paid currency preferences
-     *
-     * @param {name} name - account name of payee
-     * @param {symbol_code} currency - EOSIO symbol currency being paid (ex: "USD", "CAD", "RMB")
-     * @example
-     *
-     * setpayer( "payee.accnt", "CAD" );
-     */
-    [[eosio::action]]
-    void setpayee( name name, symbol_code currency );
-
-    /**
-     * ACTION `rmvpayee`
-     *
-     * Removes payee from EOS payroll
-     *
-     * @param {name} name - EOSIO name of payee to be removed
-     * @example
-     *
-     * rmvpayee( "payee.accnt" );
-     */
-    [[eosio::action]]
-    void rmvpayee( name name );
 
     /**
      * ACTION `setcurrency`
@@ -143,27 +115,6 @@ public:
     using payout_action = eosio::action_wrapper<"payout"_n, &eospayroll::payout>;
 
 private:
-    /**
-     * TABLE `payee`
-     *
-     * Contains all info related to the payees
-     *
-     * @param {name} name - EOSIO name of payee
-     * @param {symbol_code} currency - preferred currency for payout
-     *
-     * @example
-     * {
-     *   "name": "myaccount",
-     *   "currency": "CAD"
-     * }
-     */
-    struct [[eosio::table("payee")]] payee_row {
-        name     		name;
-        symbol_code 	currency;
-
-        auto primary_key() const { return name.value; }
-    };
-
     /**
      * TABLE `rate`
      *
@@ -266,7 +217,6 @@ private:
     };
 
     // Multi-indexes
-    using payee_table = multi_index <"payee"_n, payee_row>;
     using currency_table = multi_index <"currency"_n, currency_row>;
     using payout_table = multi_index <"payout"_n, payout_row>;
 
@@ -275,20 +225,11 @@ private:
         indexed_by<"byto"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_to> >
     > payroll_table;
 
-    payee_table _payee;
     currency_table _currency;
     payroll_table _payroll;
     payout_table _payout;
 
     // private methods
-
-    // payee
-    bool payee_exists( name name );
-    void check_payee_exists( name name );
-    void emplace_payee( name name, symbol_code currency );
-    void modify_payee( name name, symbol_code currency );
-    void erase_payee( name name );
-    symbol_code get_payee_currency( name name );
 
     // currency
     bool currency_exists( symbol_code currency );

@@ -17,9 +17,7 @@ void eospayroll::payout( name from )
         const uint32_t interval = payroll_itr->interval;
 
         // get currency rate
-        check_payee_exists( to );
-        symbol_code currency = get_payee_currency( to );
-        asset rate = get_currency_rate( currency );
+        asset rate = get_currency_rate( quantity.symbol.code() );
 
         // skip current payroll if timestamp is in the future
         if ( payroll_itr->timestamp > current_time_point() ) continue;

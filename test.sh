@@ -16,11 +16,6 @@ cleos -u $ENDPOINT push action $CODE setcurrency \
     "[\"5.65 CAD\"]" \
     -p $CODE
 
-# setpayee
-cleos -u $ENDPOINT push action $CODE setpayee \
-    "[\"$PAYEE\", \"USD\"]" \
-    -p $CODE
-
 # addpayroll
 cleos -u $ENDPOINT push action $CODE addpayroll \
     "[\"$SENDER\", \"$PAYEE\", \"100.00 USD\", \"delete me\", 60]" \
@@ -28,17 +23,17 @@ cleos -u $ENDPOINT push action $CODE addpayroll \
 
 # addpayroll
 cleos -u $ENDPOINT push action $CODE addpayroll \
-    "[\"$SENDER\", \"$PAYEE\", \"250.00 USD\", \"test payroll using USD\", 60]" \
+    "[\"$SENDER\", \"$PAYEE\", \"250.00 USD\", \"payroll using USD\", 60]" \
     -p $SENDER
 
 # addpayroll
 cleos -u $ENDPOINT push action $CODE addpayroll \
-    "[\"$SENDER\", \"$PAYEE\", \"250.00 USD\", \"test payroll using USD\", 300]" \
+    "[\"$SENDER\", \"$PAYEE\", \"250.00 CAD\", \"payroll using CAD\", 300]" \
     -p $SENDER
 
 # addpayroll
 cleos -u $ENDPOINT push action $CODE addpayroll \
-    "[\"$SENDER\", \"$PAYEE\", \"350.00 USD\", \"test payroll using USD\", 6000]" \
+    "[\"$SENDER\", \"$PAYEE\", \"350.00 CAD\", \"payroll using CAD\", 6000]" \
     -p $SENDER
 
 # rmvpayroll
