@@ -6,6 +6,7 @@ void eospayroll::addpayroll( name from, name to, asset quantity, string memo, ui
     require_auth( from );
     check( quantity.is_valid(), "[quantity] is not valid");
     check( is_account( from ), "[from] account does not exist");
+    check( quantity.amount > 0, "[quantity] must be positive");
     check_currency_exists( quantity.symbol.code() );
     emplace_payroll( from, to, quantity, memo, interval );
 }
