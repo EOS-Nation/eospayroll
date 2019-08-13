@@ -2,7 +2,7 @@
 
 ## Description
 
-Sets currency rates baes on EOS price
+Sets currency rates based on EOS price
 
 <h1 class="contract">rmvcurrency</h1>
 
