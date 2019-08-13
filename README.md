@@ -102,8 +102,8 @@ Contains all info related to the currency rates
 
 ### params
 
-- `{symbol_code} currency` - currency code (ex: "CAD")
-- `{asset} rate` - rate of currency valued in EOS (ex: "4.56 CAD")
+- `{symbol_code} currency` - currency code
+- `{asset} rate` - rate of currency valued in EOS
 - `{time_point_sec} timestamp` - last time currency rate was updated
 
 ### example
