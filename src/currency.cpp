@@ -6,6 +6,7 @@ void eospayroll::setcurrency( asset rate )
     require_auth( get_self() );
     check( rate.is_valid(), "[rate] is not a valid EOSIO asset" );
     check( rate.symbol.precision() == 2, "[rate] precision must be 2");
+    check( rate.amount > 0, "[rate] must be positive");
     symbol_code currency = rate.symbol.code();
 
     if (currency_exists( currency )) {
