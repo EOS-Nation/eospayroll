@@ -4,48 +4,20 @@ An EOSIO payroll smart contract developed by [DenisCarriere](https://github.com/
 
 ## ACTIONS
 
-- [`setpayee`](#action-setpayee)
-- [`rmvpayee`](#action-rmvpayee)
 - [`setcurrency`](#action-setcurrency)
 - [`rmvcurrency`](#action-rmvcurrency)
 - [`addpayroll`](#action-addpayroll)
 - [`rmvpayroll`](#action-rmvpayroll)
+- [`payout`](#action-payout)
 
 ## TABLES
 
-- [`payee`](#table-payee)
-- [`rate`](#table-rate)
+
+- [`currency`](#table-currency)
 - [`payroll`](#table-payroll)
 - [`payout`](#table-payout)
 
-### ACTION `setpayee`
 
-Set payee details to EOS payroll with paid currency preferences
-
-### params
-
-- `{name} name` - EOSIO name of payee
-- `{symbol_code} currency` - EOSIO symbol currency being paid (ex: "USD", "CAD", "RMB")
-
-### example
-
-```js
-setpayer( "payee.accnt", "CAD" );
-```
-
-### ACTION `rmvpayee`
-
-Removes payee from EOS payroll
-
-### params
-
-- `{name} name` - EOSIO name of payee to be removed
-
-### example
-
-```js
-rmvpayee( "payee.accnt" );
-```
 
 ### ACTION `setcurrency`
 
@@ -53,7 +25,7 @@ Set currency rates
 
 ### params
 
-- `@param {asset} rate` - currency rate based on EOS price (ex: "4.56 CAD")
+- `@param {asset} rate` - currency rate based on EOS price
 
 ### example
 
@@ -67,7 +39,7 @@ Removes currency rate from EOS payroll
 
 ### params
 
-- `{symbol_code} currency` - EOSIO symbol code currency (ex: "CAD")
+- `{symbol_code} currency` - EOSIO symbol code currency
 
 ### example
 
@@ -83,7 +55,7 @@ Add payroll details for payee's payouts per interval period
 
 - `{name} from` - account name of sender
 - `{name} to` - account name of payee
-- `{asset} quantity` - quantity amount to be paid per payout period  (ex: "100.00 CAD")
+- `{asset} quantity` - quantity amount to be paid per payout period
 - `{string} memo` - memo used when sending transfer
 - `{uint32_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 
@@ -123,25 +95,8 @@ Performs payouts per sender's payroll
 payout( "sender.acct" );
 ```
 
-### TABLE `payee`
 
-Contains all info related to the payees
-
-### params
-
-- `{name} name` - account name of payee
-- `{symbol_code} currency` - preferred currency for payout
-
-### example
-
-```json
-{
-    "name": "payee.accnt",
-    "currency": "CAD"
-}
-```
-
-### TABLE `rate`
+### TABLE `currency`
 
 Contains all info related to the currency rates
 
@@ -170,7 +125,7 @@ Contains all info related to the payroll
 - `{uint64_t} id` - unique identifier of payroll
 - `{name} from` - account name of from
 - `{name} to` - account name of to
-- `{asset} quantity` - quantity amount to be paid per payout period  (ex: "100.00 CAD")
+- `{asset} quantity` - quantity amount to be paid per payout period
 - `{uint32_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
 - `{string} memo` - memo used when sending transfer
 - `{time_point_sec} timestamp` - last time payroll was paid
@@ -183,8 +138,8 @@ Contains all info related to the payroll
     "from": "sender.accnt",
     "to": "payee.accnt",
     "quantity": "100.00 CAD",
-    "interval": 604800,
     "memo": "weekly salary",
+    "interval": 604800,
     "timestamp": "2019-07-30T22:21:51"
 }
 ```
@@ -194,10 +149,12 @@ Contains all info related to the payroll
 Contains all info related to the payout
 
 - `{uint64_t} id` - unique identifier of payout
+- `{checksum256} transaction` - identifier for transaction
 - `{name} from` - account name of sender
 - `{name} to` - account name of payee
-- `{asset} quantity` - quantity amount to be paid per payout period  (ex: "100.00 CAD")
-- `{uint32_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+- `{asset} quantity` - amount to be paid per payout period
+- `{asset} rate` - rate of currency valued in EOS
+- `{asset} eos_quantity` - quantity of EOS to be paid
 - `{string} memo` - memo used when sending transfer
 - `{time_point_sec} timestamp` - last time payout was paid
 
@@ -206,13 +163,14 @@ Contains all info related to the payout
 
 ```json
 {
-  "id": 0,
-  "transaction": "8dba3ce623551b766efe77db7b3b9151627a3bb6bfa8b5fc1609ad8a152c83bd",
-  "from": "sender.accnt",
-  "to": "payee.accnt",
-  "quantity": "10.0000 EOS",
-  "memo": "weekly salary",
-  "timestamp": "2019-07-30T22:21:51",
-  "rate": "5.65 CAD"
+    "id": 0,
+    "transaction": "8dba3ce623551b766efe77db7b3b9151627a3bb6bfa8b5fc1609ad8a152c83bd",
+    "from": "sender.accnt",
+    "to": "payee.accnt",
+    "quantity": "100.00 CAD",
+    "rate": "5.65 CAD",
+    "eos_quantity": "10.0000 EOS",
+    "memo": "weekly salary",
+    "timestamp": "2019-07-30T22:21:51"
 }
 ```
