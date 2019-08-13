@@ -1,42 +1,30 @@
-<h1 class="contract">setpayee</h1>
-
-## Description
-
-Set payee
-
-
-<h1 class="contract">rmvpayee</h1>
-
-## Description
-
-Remove payee
-
-<h1 class="contract">payout</h1>
-
-## Description
-
-Payout
-
 <h1 class="contract">setcurrency</h1>
 
 ## Description
 
-Set currency
+Sets currency rates baes on EOS price
 
 <h1 class="contract">rmvcurrency</h1>
 
 ## Description
 
-Remove currency
+Removes currency
 
 <h1 class="contract">addpayroll</h1>
 
 ## Description
 
-Add payroll
+Adds payroll information
 
 <h1 class="contract">rmvpayroll</h1>
 
 ## Description
 
-Remove payroll
+Removes payroll information
+
+<h1 class="contract">payout</h1>
+
+## Description
+
+Pays out all payees
+
