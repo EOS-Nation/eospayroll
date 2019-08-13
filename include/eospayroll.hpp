@@ -36,8 +36,7 @@ public:
      *
      * setcurrency( "4.56 CAD" );
      */
-              [[eosio::action]] void
-              setcurrency(asset rate);
+     [[eosio::action]] void setcurrency(asset rate);
 
     /**
      * ACTION `rmvcurrency`
@@ -128,8 +127,8 @@ private:
      */
     struct [[eosio::table("currency")]] currency_row
     {
-        symbol_code currency;
-        asset rate;
+        symbol_code    currency;
+        asset          rate;
         time_point_sec timestamp;
 
         auto primary_key() const { return currency.raw(); }
@@ -161,12 +160,12 @@ private:
      */
     struct [[eosio::table("payroll")]] payroll_row
     {
-        uint64_t id;
-        name from;
-        name to;
-        asset quantity;
-        string memo;
-        uint32_t interval;
+        uint64_t       id;
+        name           from;
+        name           to;
+        asset          quantity;
+        string         memo;
+        uint32_t       interval;
         time_point_sec timestamp;
 
         auto primary_key() const { return id; }
@@ -205,14 +204,14 @@ private:
      */
     struct [[eosio::table("payout")]] payout_row
     {
-        uint64_t id;
-        checksum256 transaction;
-        name from;
-        name to;
-        asset quantity;
-        asset rate;
-        asset eos_quantity;
-        string memo;
+        uint64_t       id;
+        checksum256    transaction;
+        name           from;
+        name           to;
+        asset          quantity;
+        asset          rate;
+        asset          eos_quantity;
+        string         memo;
         time_point_sec timestamp;
 
         auto primary_key() const { return id; }
@@ -224,8 +223,7 @@ private:
 
     typedef multi_index<"payroll"_n, payroll_row,
                         indexed_by<"byfrom"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_from>>,
-                        indexed_by<"byto"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_to>>>
-        payroll_table;
+                        indexed_by<"byto"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_to>>>payroll_table;
 
     currency_table _currency;
     payroll_table _payroll;
