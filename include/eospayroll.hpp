@@ -26,7 +26,7 @@ public:
           _payroll(receiver, receiver.value),
           _payout(receiver, receiver.value){}
 
-              /**
+    /**
      * ACTION `setcurrency`
      *
      * Set currency rates
