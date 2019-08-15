@@ -222,8 +222,8 @@ private:
     using payout_table = multi_index<"payout"_n, payout_row>;
 
     typedef multi_index<"payroll"_n, payroll_row,
-                        indexed_by<"byfrom"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_from>>,
-                        indexed_by<"byto"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_to>>>payroll_table;
+    indexed_by<"byfrom"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_from>>,
+    indexed_by<"byto"_n, const_mem_fun<payroll_row, uint64_t, &payroll_row::by_to>>>payroll_table;
 
     currency_table _currency;
     payroll_table _payroll;
