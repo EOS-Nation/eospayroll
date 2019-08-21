@@ -57,7 +57,7 @@ Add payroll details for payee's payouts per interval period
 - `{name} to` - account name of payee
 - `{asset} quantity` - quantity amount to be paid per payout period
 - `{string} memo` - memo used when sending transfer
-- `{uint32_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+- `{uint32_t} interval` - minimum payout interval in seconds
 
 ### example
 
@@ -126,7 +126,7 @@ Contains all info related to the payroll
 - `{name} from` - account name of from
 - `{name} to` - account name of to
 - `{asset} quantity` - quantity amount to be paid per payout period
-- `{uint32_t} interval` - minimum payout interval in seconds (ex: 60 * 60 * 24 * 7 = 604800 = 1 week)
+- `{uint32_t} interval` - minimum payout interval in seconds
 - `{string} memo` - memo used when sending transfer
 - `{time_point_sec} timestamp` - last time payroll was paid
 
